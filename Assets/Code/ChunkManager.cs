@@ -9,6 +9,7 @@ public class ChunkManager : MonoBehaviour
 
     //screen width in game unit
     private float m_screenWidthGameUnits;
+	private bool added = false;
 
 	private List<GameObject> m_chunkClones = new List<GameObject>();
 
@@ -44,6 +45,24 @@ public class ChunkManager : MonoBehaviour
         //check of alle chunks nog binne scherm zijn
         //delete de chunks die buiten het scherm zijn
         //beweeg alle chunks
+		if (added) {
+			m_chunkClones.Add(getRandomChunk(Vector3.zero));
+			added = false;
+		}
+		sortChunks (m_chunkClones);
+		for (int i = 0;i < m_chunkClones.Count; i++)
+		{
+			moveChunk(m_chunkClones[i],1);
+			if(checkBoundsChunk(m_chunkClones[i]) == true)
+			{
+				Destroy(m_chunkClones[i]);
+				m_chunkClones.RemoveAt(i);
+				added = true;
+
+				//spawnChunk(m_chunkClones[i], Vector3.zero);
+			}
+		}
+
     }
 
     /// <summary>
@@ -57,7 +76,7 @@ public class ChunkManager : MonoBehaviour
             Debug.Log("Error sort chunk! list heeft geen elementen");
             return;
         }
-        var l_offset = m_screenWidthGameUnits;
+        //var l_offset = m_screenWidthGameUnits;
         //get first chunk position
         var l_firstChunkV3 = _chunks[0].transform.position;
         //sort chunks
